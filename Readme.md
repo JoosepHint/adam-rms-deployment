@@ -12,6 +12,7 @@ docker compose up -d
 After setting up, initialize the seed which creates basic data including an admin account: 
 
 ```
+docker exec -it adamrms php vendor/bin/phinx migrate
 docker exec -it adamrms php vendor/bin/phinx seed:run
 ```
 
