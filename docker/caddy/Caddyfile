@@ -1,17 +1,7 @@
 {
     # Top level config and options for Caddy
     http_port  80
-    https_port 443
     admin off
-}
-(cloudflare) {
-    encode gzip
-    tls /etc/ssl/certs/ssl.crt /etc/ssl/private/ssl.key {
-        client_auth {
-            mode require_and_verify
-            trusted_ca_cert_file /etc/ssl/certs/origin-pull-ca.pem
-        }
-    }
 }
 (errors) {
     handle_errors {
@@ -21,9 +11,12 @@
         }
     }
 }
-https://dash.adam-rms.com {
-    import cloudflare
+http://localhost {
     import errors
+    route /static-assets/* {
+        reverse_proxy adamrms_static:80
+    }
+
     route {
         @canonicalPath {
                 file {path}/index.php

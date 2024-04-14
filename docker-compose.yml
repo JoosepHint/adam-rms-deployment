@@ -6,14 +6,9 @@ services:
     container_name: caddy
     ports:
       - 80:80
-      - 443:443
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./docker/caddy/html/:/etc/caddy/html/
-      - ./ssl.key:/etc/ssl/private/ssl.key
-      - ./ssl.crt:/etc/ssl/certs/ssl.crt
-      - ./origin-pull-ca.pem:/etc/ssl/certs/origin-pull-ca.pem
-      - caddy_data:/data    #Caddy needs persistent storage to enable it to store ACME certificates
     environment:
       ACME_AGREE: 'true'
     depends_on:
@@ -27,7 +22,6 @@ services:
       - 3306:3306
     volumes:
       - db_data:/var/lib/mysql
-      - /etc/localtime:/etc/localtime:ro
       - ./docker/mysql:/etc/mysql/conf.d
     restart: always
     environment:
@@ -50,6 +44,12 @@ services:
       - bCMS__DB_PASSWORD=passDocker
     env_file:
       - .env
+  adamrms_staticfiles:
+    build:
+      context: .
+      dockerfile: ./staticfiles.Dockerfile
+    container_name: adamrms_static
+    restart: always
   compressor:
     image: ghcr.io/adam-rms/adam-rms-imagecompressor/main:latest
     restart: always
@@ -78,35 +78,6 @@ services:
       - SLEEP_TIME=600
     env_file:
       - .env
-  mysql-backup:
-     image: index.docker.io/databack/mysql-backup:latest
-     restart: unless-stopped
-     container_name: mysql-backup
-     environment:
-       - DB_SERVER=db
-       - DB_PORT=3306
-       - DB_USER=root
-       - DB_NAMES=adamrms
-       - DB_DUMP_FREQ=60 #Hourly
-       - DB_DUMP_BEGIN=+10
-       - COMPRESSION=gzip
-       - NICE=true
-     env_file:
-       - .env
-     depends_on:
-       - db
-     volumes:
-       - /etc/localtime:/etc/localtime:ro
-  watchtower:
-    image: index.docker.io/containrrr/watchtower
-    container_name: watchtower
-    restart: always
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=30
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /root/.docker/config.json:/config.json
+
 volumes:
   db_data: { }
-  caddy_data:
