@@ -25,10 +25,10 @@ services:
       - ./docker/mysql:/etc/mysql/conf.d
     restart: always
     environment:
-      - MYSQL_DATABASE=adamrms
+      - MYSQL_DATABASE=${bCMS__DB_DATABASE}
       - MYSQL_ROOT_HOST=%
-      - MYSQL_USER=userDocker
-      - MYSQL_PASSWORD=passDocker
+      - MYSQL_USER=${bCMS__DB_USERNAME}
+      - MYSQL_PASSWORD=${bCMS__DB_PASSWORD}
     env_file:
       - .env
   adamrms:
@@ -38,10 +38,10 @@ services:
     depends_on:
       - db
     environment:
-      - bCMS__DB_HOSTNAME=db
-      - bCMS__DB_DATABASE=adamrms
-      - bCMS__DB_USERNAME=userDocker
-      - bCMS__DB_PASSWORD=passDocker
+      - bCMS__DB_HOSTNAME=${bCMS__DB_HOSTNAME}
+      - bCMS__DB_DATABASE=${bCMS__DB_DATABASE}
+      - bCMS__DB_USERNAME=${bCMS__DB_USERNAME}
+      - bCMS__DB_PASSWORD=${bCMS__DB_PASSWORD}
     env_file:
       - .env
   adamrms_staticfiles:
@@ -57,10 +57,10 @@ services:
     depends_on:
       - db
     environment:
-      - MYSQL_HOSTNAME=db
-      - MYSQL_DATABASE=adamrms
-      - MYSQL_USER=userDocker
-      - MYSQL_PASSWORD=passDocker
+      - MYSQL_HOSTNAME=${bCMS__DB_HOSTNAME}
+      - MYSQL_DATABASE=${bCMS__DB_DATABASE}
+      - MYSQL_USER=${bCMS__DB_USERNAME}
+      - MYSQL_PASSWORD=${bCMS__DB_PASSWORD}
       - SLEEP_TIME=60
     env_file:
       - .env
@@ -72,9 +72,9 @@ services:
       - db
     environment:
       - MYSQL_HOSTNAME=db
-      - MYSQL_DATABASE=adamrms
-      - MYSQL_USER=userDocker
-      - MYSQL_PASSWORD=passDocker
+      - MYSQL_DATABASE=${bCMS__DB_DATABASE}
+      - MYSQL_USER=${bCMS__DB_USERNAME}
+      - MYSQL_PASSWORD=${bCMS__DB_PASSWORD}
       - SLEEP_TIME=600
     env_file:
       - .env
